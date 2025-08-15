@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>LeafSense Admin</title>
+<style>
+body{font-family:Arial;background:#f4f6f4;padding:20px}
+.container{max-width:800px;margin:0 auto;background:#fff;padding:20px;border-radius:8px}
+input, textarea, select{width:100%;padding:8px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
+button{background:#2e7d32;color:#fff;padding:10px;border:0;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Admin - Add Disease & Remedy</h2>
+<form id="dform">
+<label>Disease name</label><input name="dname" required>
+<label>Description</label><textarea name="desc"></textarea>
+<label>Remedy type</label>
+<select name="rtype"><option value="chemical">Chemical</option><option value="natural">Natural</option></select>
+<label>Remedy name</label><input name="rname">
+<label>Instructions</label><textarea name="rinstr"></textarea>
+<button type="submit">Add</button>
+</form>
+<p id="msg"></p>
+</div>
+<script>
+document.getElementById('dform').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const res = await fetch('admin_api.php', {method:'POST', body: f});
+    const j = await res.json();
+    document.getElementById('msg').innerText = j.message || '';
+});
+</script>
+</body>
+</html>

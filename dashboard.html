@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LeafSense Dashboard</title>
+    <style>
+        body{font-family:Arial;background:#eef9ee;margin:0;padding:0}
+        header{background:#2e7d32;color:#fff;padding:15px;text-align:center}
+        .wrap{max-width:700px;margin:30px auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+        input[type=file]{width:100%}
+        button{background:#2e7d32;color:#fff;padding:12px;border:0;border-radius:8px;cursor:pointer;width:100%}
+        .result{margin-top:20px;background:#f7fff7;padding:12px;border-radius:8px}
+    </style>
+</head>
+<body>
+<header>🌿 LeafSense</header>
+<div class="wrap">
+    <h3>Scan a leaf</h3>
+    <form id="scanForm" enctype="multipart/form-data">
+        <input type="file" name="leafImage" id="leafImage" accept="image/*" required>
+        <button type="submit">Scan</button>
+    </form>
+
+    <div class="result" id="result" style="display:none">
+        <h4>Disease: <span id="disease"></span></h4>
+        <p><b>Chemical:</b> <span id="chem"></span></p>
+        <p><b>Natural:</b> <span id="nat"></span></p>
+        <p><b>Tips:</b> <span id="tips"></span></p>
+        <p><b>Confidence:</b> <span id="conf"></span></p>
+        <img id="preview" style="max-width:100%;margin-top:10px;border-radius:6px"/>
+    </div>
+</div>
+
+<script>
+document.getElementById('scanForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const resp = await fetch('scan.php', {method:'POST', body: f});
+    const j = await resp.json();
+    if (j.status === 'success') {
+        document.getElementById('result').style.display='block';
+        document.getElementById('disease').innerText = j.disease;
+        document.getElementById('chem').innerText = j.chemical;
+        document.getElementById('nat').innerText = j.natural;
+        document.getElementById('tips').innerText = j.tips;
+        document.getElementById('conf').innerText = (j.confidence || '') + '%';
+        document.getElementById('preview').src = j.image_url ? j.image_url : '';
+    } else {
+        alert(j.message || 'Error');
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LeafSense - Login/Register</title>
+    <style>
+        body{font-family:Arial;margin:0;background:linear-gradient(90deg,#dff0d8,#b1e6a8);min-height:100vh;display:flex;align-items:center;justify-content:center}
+        .card{background:white;padding:20px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.12);width:360px}
+        input{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:6px}
+        button{background:#2e7d32;color:white;padding:10px;border:0;border-radius:6px;width:100%;cursor:pointer}
+        .link{color:#0a66c2;cursor:pointer;text-align:center;margin-top:10px}
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2 id="title">Login</h2>
+    <form id="authForm">
+        <div id="nameField" style="display:none">
+            <input name="name" placeholder="Full name">
+        </div>
+        <input name="email" type="email" placeholder="Email" required>
+        <input name="password" type="password" placeholder="Password" required>
+        <button type="submit">Submit</button>
+    </form>
+    <p class="link" onclick="toggle()">Don't have account? Register</p>
+    <p id="msg"></p>
+</div>
+
+<script>
+let isLogin=true;
+function toggle(){
+    isLogin=!isLogin;
+    document.getElementById('title').innerText = isLogin ? 'Login':'Register';
+    document.getElementById('nameField').style.display = isLogin ? 'none':'block';
+    document.querySelector('.link').innerText = isLogin ? "Don't have account? Register":"Already have account? Login";
+}
+document.getElementById('authForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const url = isLogin ? 'login.php' : 'register.php';
+    const res = await fetch(url, {method:'POST', body: f});
+    const j = await res.json();
+    document.getElementById('msg').innerText = j.message || '';
+    if (j.status === 'success' && isLogin) {
+        window.location.href = 'dashboard.html';
+    }
+});
+</script>
+</body>
+</html>
